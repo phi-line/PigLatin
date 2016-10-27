@@ -49,7 +49,6 @@ public:
       string output;
       string curCompare;
       for (auto pre = consonants.rbegin(); pre != consonants.rend(); ++pre){
-         //cout << prefix << " ";
          //loops for each letter possibility from largest to smallest
          int x;
          for (x = 2, curCompare = word.substr(0, x);
@@ -77,10 +76,12 @@ string getString();
 const int max_phrase_len = 4;
 
 int main() {
-   string word, igpay;
-   word = getString();
-   igpay = PigLatin.Arsepay(word);
-   cout << "Your converted phrase is: " << igpay <<endl;
+   while(true){
+      string word, rasephay;
+      word = getString();
+      rasephay = PigLatin.Arsepay(word);
+      cout << "Your converted phrase is: " << rasephay <<endl;
+   }
    return 0;
 }
 
