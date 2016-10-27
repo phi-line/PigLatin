@@ -17,16 +17,28 @@ protected:
        "n", "p", "q", "r", "s", "t", "v", "w", "x", "z",
        "cc", "ch", "gh", "gu", "ph", "qu", "sc", "sh", "th",
        "wh", "kn", "gn", "pn", "ps", "rh", "wr", "tch", "sch"};
-   array<string, 37> vowelSounds =
-      {"a", "e", "i", "o", "u", "ea", "ee", "y", "ai", "ay", "ei",
+   array<string, 36> vowelSounds =
+      {"a", "e", "i", "o", "u", "ea", "ee", "ai", "ay", "ei",
        "ey", "ea", "ar", "ie", "uy", "ou", "ow", "or", "aw", "au",
        "al", "wa", "oi", "oy", "oa", "ew", "eu", "ue", "ui", "oo",
        "er", "ur", "ir", "or", "ar", "ear"};
-   string consSuffix = "ay";
-   string vowelSuffix = "way";
+   string CONS_SUFFIX = "ay";
+   string VOWEL_SUFFIX = "way";
+   string Y_CHAR = "y";
    string FormLatin(string word, string suffix){
       word += suffix;
       return word;
+   }
+   string CompareString(string word, string pre, string suf){
+      int x;
+      string curCompare;
+      for (x = 2, curCompare = word.substr(0, x);
+           x >= 0; --x, curCompare = word.substr(0, x)){
+         if (pre == curCompare){
+            return FormLatin(word, pre, suf);
+         }
+      }
+      return FormLatin(word, VOWEL_SUFFIX);
    }
 //get numLet in prefix and form substr from the non-inclusive letter
 //append the prefix & suffix to back of new substr
@@ -35,7 +47,7 @@ protected:
          return word+=suffix;
       }
       string piggified, appendMe;
-      appendMe += prefix; appendMe += suffix;
+      appendMe += prefix + suffix;
       //cout << "Prefix: " << prefix << "| Suffix:" << suffix;
       //cout << "| Appended:" << appendMe << endl;
       int wordIndex = (int)std::strlen(word.c_str() - 1);
@@ -50,32 +62,22 @@ public:
    string Arsepay(string word){
       string output;
       string curCompare;
-      //needs special case for 'y'
+      //special case for 'y'
+      size_t found = word.find_first_of("y");
       if (word[0] == 'y'){
-         for (auto pre = consonants.rbegin(); pre != consonants.rend(); ++pre){
-
-         }
+         return FormLatin(word, Y_CHAR, VOWEL_SUFFIX);
+      } else if (found != string::npos){
+         //get letters before and append it as pre!
+         return FormLatin(word, word.substr(0, found), CONS_SUFFIX);
       }
       for (auto pre = consonants.rbegin(); pre != consonants.rend(); ++pre){
          //loops for each letter possibility from largest to smallest (trickle)
-         int x;
-         for (x = 2, curCompare = word.substr(0, x);
-              x >= 0; --x, curCompare = word.substr(0, x)){
-            if (*pre == curCompare){
-               return FormLatin(word, *pre, consSuffix);
-            }
-         }
+         CompareString(word, *pre, CONS_SUFFIX);
       }
       for (auto pre = vowelSounds.rbegin(); pre != vowelSounds.rend(); ++pre){
-         int y;
-         for (y = 2, curCompare = word.substr(0, y);
-              y >= 0; --y, curCompare = word.substr(0, y)){
-            if (*pre == curCompare){
-               return FormLatin(word, *pre, vowelSuffix);
-            }
-         }
+         CompareString(word, *pre, VOWEL_SUFFIX);
       }
-      return FormLatin(word, vowelSuffix);
+      return FormLatin(word, VOWEL_SUFFIX);
    }
    string PhraseParser(vector<string> phrase){
       stringstream ss;
@@ -96,9 +98,9 @@ const int max_phrase_len = 3;
 int main() {
    while(true){
    string word, ordway, rasephay;
-   word = getString();
-   ordway = PigLatin.Arsepay(word);
-   cout << "Your converted word is: " << ordway <<endl;
+//   word = getString();
+//   ordway = PigLatin.Arsepay(word);
+//   cout << "Your converted word is: " << ordway <<endl;
    rasephay = PigLatin.PhraseParser(parseSentence());
    cout << "Your converted phrase is: " << rasephay << endl;
    }
