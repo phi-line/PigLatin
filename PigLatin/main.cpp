@@ -1,18 +1,13 @@
-//
-//  main.cpp
-//  PigLatin
-//
-//  Created by admin on 10/26/16.
-//  Copyright © 2016 admin. All rights reserved.
-//
-
 #include <iostream>
 #include <cstring>
 #include <sstream>
 #include <array>
+#include <vector>
 #include <iterator>
+#include <algorithm>
 
 using namespace std;
+using Iter = vector<string>::const_iterator;
 
 class IgpayAtinlay{
 protected:
@@ -29,9 +24,16 @@ protected:
        "er", "ur", "ir", "or", "ar", "ear"};
    string consSuffix = "ay";
    string vowelSuffix = "way";
+   string FormLatin(string word, string suffix){
+      word += suffix;
+      return word;
+   }
+//get numLet in prefix and form substr from the non-inclusive letter
+//append the prefix & suffix to back of new substr
    string FormLatin(string word, string prefix, string suffix){
-      //get numLet in prefix and form substr from the non-inclusive letter
-      //append the prefix & suffix to back of new substr
+      if (word.length() <= 2){
+         return word+=suffix;
+      }
       string piggified, appendMe;
       appendMe += prefix; appendMe += suffix;
       //cout << "Prefix: " << prefix << "| Suffix:" << suffix;
@@ -43,13 +45,19 @@ protected:
       return piggified;
    }
 public:
-   //parses the string and returns the word
-   //needs to append prefix to back and append suffix
+//parses the string and returns the word
+//needs to append prefix to back and append suffix
    string Arsepay(string word){
       string output;
       string curCompare;
+      //needs special case for 'y'
+      if (word[0] == 'y'){
+         for (auto pre = consonants.rbegin(); pre != consonants.rend(); ++pre){
+
+         }
+      }
       for (auto pre = consonants.rbegin(); pre != consonants.rend(); ++pre){
-         //loops for each letter possibility from largest to smallest
+         //loops for each letter possibility from largest to smallest (trickle)
          int x;
          for (x = 2, curCompare = word.substr(0, x);
               x >= 0; --x, curCompare = word.substr(0, x)){
@@ -67,32 +75,63 @@ public:
             }
          }
       }
-      return output;
+      return FormLatin(word, vowelSuffix);
+   }
+   string PhraseParser(vector<string> phrase){
+      stringstream ss;
+      string strOutput, convertMe;
+      for (Iter it = phrase.begin(); it != phrase.end(); ++it){
+         convertMe = Arsepay(*it);
+         strOutput += convertMe + " ";
+      }
+      return strOutput;
    }
 };
 
 IgpayAtinlay PigLatin;
 string getString();
-const int max_phrase_len = 4;
+vector<string> parseSentence();
+const int max_phrase_len = 3;
 
 int main() {
    while(true){
-      string word, rasephay;
-      word = getString();
-      rasephay = PigLatin.Arsepay(word);
-      cout << "Your converted phrase is: " << rasephay <<endl;
+   string word, ordway, rasephay;
+   word = getString();
+   ordway = PigLatin.Arsepay(word);
+   cout << "Your converted word is: " << ordway <<endl;
+   rasephay = PigLatin.PhraseParser(parseSentence());
+   cout << "Your converted phrase is: " << rasephay << endl;
    }
    return 0;
 }
 
 string getString(){
    string strBuffer, strInput;
-   while (cout << "Enter phrase to convert to pig latin >= " <<
+   while (cout << "Enter word to convert to pig latin >= " <<
           max_phrase_len << ": " && getline(cin, strInput)){
       istringstream(strBuffer) >> strInput;
       if (strlen(strInput.c_str()) >= max_phrase_len){
+         transform(strInput.begin(), strInput.end(),
+                   strInput.begin(), ::tolower);
          return strInput;
       }
    }
    return strInput;
+}
+
+vector<string> parseSentence(){
+   string strInput;
+   while (cout << "Enter phrase to convert to pig latin >= " <<
+          max_phrase_len << ": " && getline(cin, strInput)){
+      if (strlen(strInput.c_str()) >= max_phrase_len){
+         break;
+      }
+   }
+   transform(strInput.begin(), strInput.end(),
+             strInput.begin(), ::tolower);
+   stringstream ss(strInput);
+   istream_iterator<string> begin(ss);
+   istream_iterator<string> end;
+   vector<string> words(begin, end);
+   return words;
 }
