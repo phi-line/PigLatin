@@ -29,17 +29,6 @@ protected:
       word += suffix;
       return word;
    }
-   string CompareString(string word, string pre, string suf){
-      int x;
-      string curCompare;
-      for (x = 2, curCompare = word.substr(0, x);
-           x >= 0; --x, curCompare = word.substr(0, x)){
-         if (pre == curCompare){
-            return FormLatin(word, pre, suf);
-         }
-      }
-      return FormLatin(word, VOWEL_SUFFIX);
-   }
 //get numLet in prefix and form substr from the non-inclusive letter
 //append the prefix & suffix to back of new substr
    string FormLatin(string word, string prefix, string suffix){
@@ -72,10 +61,24 @@ public:
       }
       for (auto pre = consonants.rbegin(); pre != consonants.rend(); ++pre){
          //loops for each letter possibility from largest to smallest (trickle)
-         CompareString(word, *pre, CONS_SUFFIX);
+         int x;
+         string curCompare;
+         for (x = 2, curCompare = word.substr(0, x);
+              x >= 0; --x, curCompare = word.substr(0, x)){
+            if (*pre == curCompare){
+               return FormLatin(word, *pre, CONS_SUFFIX);
+            }
+         }
       }
       for (auto pre = vowelSounds.rbegin(); pre != vowelSounds.rend(); ++pre){
-         CompareString(word, *pre, VOWEL_SUFFIX);
+         int x;
+         string curCompare;
+         for (x = 2, curCompare = word.substr(0, x);
+              x >= 0; --x, curCompare = word.substr(0, x)){
+            if (*pre == curCompare){
+               return FormLatin(word, *pre, VOWEL_SUFFIX);
+            }
+         }
       }
       return FormLatin(word, VOWEL_SUFFIX);
    }
